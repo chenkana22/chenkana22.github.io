@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>記憶翻牌遊戲</title>
+
+    <style>
+        body {
+            margin: 0;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+
+        .game-container {
+            display: grid;
+            grid-template-columns: repeat(6, 100px);
+            grid-template-rows: repeat(5, 100px);
+            gap: 10px;
+        }
+
+        .card {
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+            border: 2px solid #003a77;
+            cursor: pointer;
+
+            /* ✨ 這裡使用深線條太空人圖片 */
+            background-image: url('astronaut-dark.png'); /* <-- 改成你下載的檔名 */
+            background-size: 65%;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: #e8f2ff; /* 讓圖案更顯眼 */
+        }
+
+        .bottom-panel {
+            position: absolute;
+            bottom: 20px;
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .restart-btn {
+            padding: 12px 20px;
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: not-allowed;
+        }
+
+        .score-board {
+            padding: 12px 20px;
+            background-color: #4caf50;
+            color: white;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="game-container">
+        <!-- 30 張背面卡 -->
+        <!-- 5 x 6 -->
+        <!-- 用 CSS 背景圖當背面，所以這裡不用內容 -->
+        <!-- 自動顯示太空人圖案 -->
+        <!-- 以下 30 張 -->
+        ${'<div class="card"></div>'.repeat(30)}
+    </div>
+
+    <div class="bottom-panel">
+        <button class="restart-btn">重新開始</button>
+        <div class="score-board">得分：0</div>
+    </div>
+
+</body>
+</html>
