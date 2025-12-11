@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>記憶卡牌遊戲</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background: #eee;
+        }
+
+        .game-container {
+            position: relative;
+            width: 900px;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(6, 100px);
+            grid-template-rows: repeat(5, 100px);
+            gap: 10px;
+            margin-bottom: 20px;
+            float: left;
+        }
+
+        /* ★★★ 卡牌背面圖片樣式 ★★★ */
+        .card {
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+            background-image: url("imagesback.png"); /* 你的圖片 */
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 32px;
+            color: transparent; /* 背面不顯示文字 */
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* ★ 翻開後的樣式（顯示正面數字）★ */
+        .card.flipped {
+            background: #ff9800;  /* 翻開變橘色 */
+            background-image: none;
+            color: white;
+        }
+
+        .stack-area {
+            width: 100px;
+            height: 100px;
+            background: #bbb;
+            border-radius: 10px;
+            position: absolute;
+            left: 760px;
+            top: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            color: black;
+            flex-direction: column;
+            overflow: visible;
+        }
+
+        .restart-btn {
+            position: absolute;
+            bottom: -60px;
+            left: 0;
+            padding: 10px 20px;
+            background: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .score-board {
+            position: absolute;
+            bottom: -60px;
+            right: 0;
+            padding: 10px 20px;
+            background: #1976d2;
+            color: white;
+            border-radius: 6px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>記憶卡牌遊戲</h1>
+
+    <div class="game-container">
+
+        <div id="board" class="board"></div>
+
+        <div id="stackArea" class="stack-area">配對堆疊</div>
+
+        <button id="restartBtn" class="restart-btn">重新開始</button>
+
+        <div id="scoreBoard" class="score-board">得分：0</div>
+    </div>
+
+    <script>
+        const board = document.getElementById("board");
+        const restartBtn = document.getElementById("restartBtn");
+        const scoreBoard = document.getElementById("scoreBoard");
+        const stackArea = document.getElementById("stackArea");
+
+        let cards = [];
+        let firstCard = null;
+        let secondCard = null;
+        let lockBoard = false;
+        let score = 0;
+
+        function generateCards() {
+            let arr = [];
+            for (let i = 1; i <= 15; i++) {
+                arr.push(i);
+                arr.push(i);
+            }
+            return arr.sort(() => Math.random() - 0.5);
+        }
+
+        function createBoard() {
+            board.innerHTML = "";
+            stackArea.innerHTML = "配對堆疊";
+            score = 0;
+            scoreBoard.textContent = "得分：" + score;
+
+            cards = generateCards();
+
+            cards.forEach(num => {
+                let card = document.createElement("div");
+                card.classList.add("card");
+                card.dataset.value = num;
+
+                /* ★ 背面不顯示字 ★ */
+                card.textContent = "";
+
+                card.addEventListener("click", flipCard);
+                board.appendChild(card);
+            });
+        }
+
+        function flipCard() {
+            if (lockBoard || this === firstCard || this.classList.contains("matched")) return;
+
+            /* 翻開：顯示數字 */
+            this.textContent = this.dataset.value;
+            this.classList.add("flipped");
+
+            if (!firstCard) {
+                firstCard = this;
+                return;
+            }
+
+            secondCard = this;
+            lockBoard = true;
+
+            setTimeout(checkMatch, 700);
+        }
+
+        function moveToStack(card) {
+            let smallCard = document.createElement("div");
+            smallCard.classList.add("card");
+            smallCard.style.width = "100px";
+            smallCard.style.height = "100px";
+            smallCard.style.fontSize = "28px";
+            smallCard.style.marginTop = "-60px";
+            smallCard.style.background = "#ff9800";
+            smallCard.style.backgroundImage = "none";
+            smallCard.textContent = card.dataset.value;
+            stackArea.appendChild(smallCard);
+        }
+
+        function checkMatch() {
+            if (firstCard.dataset.value === secondCard.dataset.value) {
+                score++;
+                scoreBoard.textContent = "得分：" + score;
+
+                firstCard.classList.add("matched");
+                secondCard.classList.add("matched");
+
+                moveToStack(firstCard);
+                moveToStack(secondCard);
+
+            } else {
+                firstCard.textContent = "";
+                secondCard.textContent = "";
+                firstCard.classList.remove("flipped");
+                secondCard.classList.remove("flipped");
+            }
+
+            firstCard = null;
+            secondCard = null;
+            lockBoard = false;
+        }
+
+        restartBtn.addEventListener("click", createBoard);
+
+        createBoard();
+    </script>
+
+</body>
+</html>
